@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trang Tài Xế - VietBike{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/driver_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="container">
+        <div class="dashboard-header">
+            <h2 class="dashboard-title">Bảng Điều Khiển Tài Xế</h2>
+            <p class="dashboard-subtitle">Quản lý chuyến đi và theo dõi thu nhập của bạn</p>
+        </div>
+        
+        <div class="dashboard-card">
+            <div class="map-section">
+                <div id="map"></div>
+                
+                <div class="driver-profile">
+                    <div class="driver-avatar">
+                        <img src="{% if profile.profile_picture %}{{ profile.profile_picture.url }}{% else %}https://via.placeholder.com/50{% endif %}" alt="Tài xế">
+                    </div>
+                    <div class="driver-rating">
+                        <i class="bi bi-star-fill"></i>
+                        <span>5.0</span>
+                    </div>
+                </div>
+                
+                <div class="map-controls">
+                    <button title="Thời tiết" class="map-control-btn">
+                        <i class="bi bi-cloud"></i>
+                    </button>
+                    <button title="Điều hướng" class="map-control-btn">
+                        <i class="bi bi-compass"></i>
+                    </button>
+                    <button title="Vị trí" id="locationBtn" class="map-control-btn">
+                        <i class="bi bi-geo-alt"></i>
+                    </button>
+                    <button title="Xoay bản đồ" id="resetOrientationBtn" class="map-control-btn">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </button>
+                </div>
+                
+                <div class="status-indicator {% if profile.is_available %}online{% else %}offline{% endif %}">
+                    <div class="status-dot"></div>
+                    <span>{% if profile.is_available %}Online{% else %}Offline{% endif %}</span>
+                </div>
+            </div>
+            
+            <div class="dashboard-content">
+                <div class="status-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" {% if profile.is_available %}checked{% endif %} id="statusToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">{% if profile.is_available %}Đang hoạt động{% else %}Không hoạt động{% endif %}</span>
+                </div>
+                
+                <div class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Thu nhập hôm nay</h3>
+                            <p>0đ</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-bicycle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Chuyến đi hôm nay</h3>
+                            <p>0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Giờ hoạt động</h3>
+                            <p>0h</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <h3 class="section-title">Thao tác nhanh</h3>
+                    <div class="action-grid">
+                        <button class="action-btn">
+                            <i class="bi bi-car-front"></i>
+                            <span>Loại dịch vụ</span>
+                        </button>
+                        <button class="action-btn">
+                            <i class="bi bi-geo"></i>
+                            <span>Điểm đến yêu thích</span>
+                        </button>
+                        <button class="action-btn">
+                            <i class="bi bi-lightning-charge"></i>
+                            <span>Tự động nhận</span>
+                        </button>
+                        <button class="action-btn">
+                            <i class="bi bi-gear"></i>
+                            <span>Cài đặt</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="recent-rides">
+                    <h3 class="section-title">Chuyến đi gần đây</h3>
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="bi bi-calendar-x"></i>
+                        </div>
+                        <p>Chưa có chuyến đi nào hôm nay</p>
+                        <button class="btn-primary">Xem lịch sử chuyến đi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyFtIwCjdqa288Tpi95guG3CtKJvGP60w&callback=initMap" async defer></script>
+    <script src="{% static 'js/driver_dashboard.js' %}"></script>
+{% endblock %}

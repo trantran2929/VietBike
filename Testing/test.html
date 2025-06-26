@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Google Maps API Demo</title>
+    <style>
+      /* Thêm CSS để định dạng map container */
+      #map {
+        width: 100%;
+        height: 500px; /* chiều cao cho map */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Demo Google Maps JavaScript API</h1>
+    <div id="map"></div>
+    
+    <!-- Chèn script Google Maps API: key=YOUR_API_KEY -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao&libraries=places&callback=initMap"
+      async
+      defer
+    ></script>
+
+    <script>
+      // Hàm initMap sẽ được gọi sau khi Google Maps script tải xong
+      function initMap() {
+        // Tạo đối tượng "map" và gắn vào thẻ div có id="map"
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 10.762622, lng: 106.660172 }, // Tọa độ (lat, lng), ví dụ tại TP.HCM
+          zoom: 14, // Mức độ phóng
+        });
+
+        // Thêm marker lên bản đồ
+        const marker = new google.maps.Marker({
+          position: { lat: 10.762622, lng: 106.660172 },
+          map: map,
+          title: "Vị trí của bạn",
+        });
+      }
+    </script>
+  </body>
+</html>

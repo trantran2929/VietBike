@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Thanh Toán & Đánh Giá - VietBike{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/payment_and_rating.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="payment-wrapper">
+    <div class="container">
+        <div class="payment-header">
+            <h2 class="payment-title">Thanh Toán & Đánh Giá</h2>
+            <p class="payment-subtitle">Hoàn tất chuyến đi của bạn</p>
+        </div>
+        
+        <div class="payment-card">
+            <!-- Trip Summary -->
+            <div class="trip-summary">
+                <h3 class="section-title">Thông tin chuyến đi</h3>
+                <div class="trip-details">
+                    <div class="trip-route">
+                        <div class="route-point pickup">
+                            <div class="route-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="route-info">
+                                <span class="route-label">Điểm đón</span>
+                                <span class="route-address" id="pickupAddress">{{ ride.start_location|default:'Chưa có thông tin' }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="route-line"></div>
+                        
+                        <div class="route-point destination">
+                            <div class="route-icon">
+                                <i class="bi bi-geo-fill"></i>
+                            </div>
+                            <div class="route-info">
+                                <span class="route-label">Điểm đến</span>
+                                <span class="route-address" id="destinationAddress">{{ ride.end_location|default:'Chưa có thông tin' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trip-meta">
+                        <div class="meta-item">
+                            <i class="bi bi-clock"></i>
+                            <span>Thời gian: <strong id="tripDuration">{{ ride.duration|default:'--' }} phút</strong></span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Khoảng cách: <strong id="tripDistance">{{ ride.distance|default:'--' }} km</strong></span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="bi bi-person"></i>
+                            <span>Tài xế: <strong id="driverName">{{ ride.driver.username|default:'--' }}</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Section -->
+            <div class="payment-section">
+                <h3 class="section-title">Thanh toán</h3>
+                <div class="payment-details">
+                    <div class="fare-breakdown">
+                        <div class="fare-item">
+                            <span>Giá cước</span>
+                            <span id="baseFare">{{ ride.fare|default:'0' }}đ</span>
+                        </div>
+                        <div class="fare-item">
+                            <span>Phí dịch vụ</span>
+                            <span id="serviceFee">0đ</span>
+                        </div>
+                        <div class="fare-item total">
+                            <span>Tổng cộng</span>
+                            <span id="totalFare">{{ ride.fare|default:'0' }}đ</span>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-method">
+                        <label for="paymentSelect">Phương thức thanh toán</label>
+                        <select id="paymentSelect" class="form-select">
+                            <option value="cash">Tiền mặt</option>
+                            <option value="card" disabled>Thẻ tín dụng (Sắp có)</option>
+                            <option value="wallet" disabled>Ví điện tử (Sắp có)</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-payment" id="paymentBtn">
+                        <i class="bi bi-credit-card"></i>
+                        Xác nhận thanh toán
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Rating Section -->
+            <div class="rating-section" id="ratingSection" style="display: none;">
+                <h3 class="section-title">Đánh giá chuyến đi</h3>
+                <div class="rating-content">
+                    <div class="driver-info">
+                        <div class="driver-avatar">
+                            <img src="{% if ride.driver.profile_picture %}{{ ride.driver.profile_picture.url }}{% else %}https://via.placeholder.com/60{% endif %}" alt="Tài xế" id="driverAvatar">
+                        </div>
+                        <div class="driver-details">
+                            <h4 id="driverNameRating">{{ ride.driver.username|default:'Tài xế' }}</h4>
+                            <p>Hãy đánh giá trải nghiệm của bạn</p>
+                        </div>
+                    </div>
+                    
+                    <div class="star-rating">
+                        <div class="stars">
+                            <i class="bi bi-star" data-rating="1"></i>
+                            <i class="bi bi-star" data-rating="2"></i>
+                            <i class="bi bi-star" data-rating="3"></i>
+                            <i class="bi bi-star" data-rating="4"></i>
+                            <i class="bi bi-star" data-rating="5"></i>
+                        </div>
+                        <span class="rating-text">Chọn số sao</span>
+                    </div>
+                    
+                    <div class="rating-comment">
+                        <label for="commentText">Nhận xét (tùy chọn)</label>
+                        <textarea id="commentText" class="form-control" rows="3" placeholder="Chia sẻ trải nghiệm của bạn về chuyến đi này..."></textarea>
+                    </div>
+                    
+                    <button class="btn btn-rating" id="submitRating">
+                        <i class="bi bi-send"></i>
+                        Gửi đánh giá
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Success Message -->
+            <div class="success-section" id="successSection" style="display: none;">
+                <div class="success-content">
+                    <div class="success-icon">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <h3>Hoàn thành!</h3>
+                    <p>Cảm ơn bạn đã sử dụng dịch vụ VietBike</p>
+                    <div class="success-actions">
+                        <a href="{% url 'frontend:home' %}" class="btn btn-primary">Về trang chủ</a>
+                        <a href="{% url 'frontend:history' %}" class="btn btn-secondary">Xem lịch sử</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentBtn = document.getElementById('paymentBtn');
+        const ratingSection = document.getElementById('ratingSection');
+        const successSection = document.getElementById('successSection');
+        const stars = document.querySelectorAll('.stars i');
+        const ratingText = document.querySelector('.rating-text');
+        const submitRatingBtn = document.getElementById('submitRating');
+        
+        let selectedRating = 0;
+        
+        // Payment button click
+        paymentBtn.addEventListener('click', function() {
+            // Simulate payment processing
+            this.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang xử lý...';
+            this.disabled = true;
+            
+            setTimeout(() => {
+                document.querySelector('.payment-section').style.display = 'none';
+                ratingSection.style.display = 'block';
+                ratingSection.scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        });
+        
+        // Star rating
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                updateStars();
+                updateRatingText();
+            });
+            
+            star.addEventListener('mouseover', function() {
+                const hoverRating = parseInt(this.dataset.rating);
+                highlightStars(hoverRating);
+            });
+        });
+        
+        document.querySelector('.stars').addEventListener('mouseleave', function() {
+            updateStars();
+        });
+        
+        function updateStars() {
+            stars.forEach((star, index) => {
+                if (index < selectedRating) {
+                    star.classList.remove('bi-star');
+                    star.classList.add('bi-star-fill');
+                } else {
+                    star.classList.remove('bi-star-fill');
+                    star.classList.add('bi-star');
+                }
+            });
+        }
+        
+        function highlightStars(rating) {
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.remove('bi-star');
+                    star.classList.add('bi-star-fill');
+                } else {
+                    star.classList.remove('bi-star-fill');
+                    star.classList.add('bi-star');
+                }
+            });
+        }
+        
+        function updateRatingText() {
+            const texts = ['', 'Rất tệ', 'Tệ', 'Bình thường', 'Tốt', 'Xuất sắc'];
+            ratingText.textContent = texts[selectedRating];
+        }
+        
+        // Submit rating
+        submitRatingBtn.addEventListener('click', function() {
+            if (selectedRating === 0) {
+                alert('Vui lòng chọn số sao đánh giá');
+                return;
+            }
+            
+            this.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang gửi...';
+            this.disabled = true;
+            
+            setTimeout(() => {
+                ratingSection.style.display = 'none';
+                successSection.style.display = 'block';
+                successSection.scrollIntoView({ behavior: 'smooth' });
+            }, 1500);
+        });
+    });
+</script>
+{% endblock %}

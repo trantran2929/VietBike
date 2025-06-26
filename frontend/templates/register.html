@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Đăng Ký - VietBike{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="register-wrapper">
+    <div class="register-card">
+        <div class="register-header">
+            <div class="register-icon">
+                <i class="bi bi-bicycle"></i>
+            </div>
+            <h2 class="register-title">Tạo Tài Khoản</h2>
+            <p class="register-subtitle">Đăng ký để trải nghiệm dịch vụ VietBike</p>
+        </div>
+        
+        <div class="register-body">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-modern">
+                    <i class="bi bi-exclamation-triangle me-2"></i>{{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% if error_message %}
+            <div class="alert alert-danger alert-modern">
+                <i class="bi bi-exclamation-triangle me-2"></i>{{ error_message }}
+            </div>
+            {% endif %}
+            
+            <form method="post" action="{% url 'frontend:auth:register_user' %}" id="registerForm">
+                {% csrf_token %}
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" name="username" id="username" placeholder="Tên đăng nhập" required value="{{ username|default:'' }}">
+                    <label for="username">Tên đăng nhập</label>
+                    <i class="bi bi-person input-icon"></i>
+                    <div id="username-error" class="text-danger small"></div>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Email" required value="{{ email|default:'' }}">
+                    <label for="email">Địa chỉ email</label>
+                    <i class="bi bi-envelope input-icon"></i>
+                    <div id="email-error" class="text-danger small"></div>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input type="tel" class="form-control" name="phone" id="phone" placeholder="Số điện thoại" required value="{{ phone|default:'' }}">
+                    <label for="phone">Số điện thoại</label>
+                    <i class="bi bi-telephone input-icon"></i>
+                    <div id="phone-error" class="text-danger small"></div>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Mật khẩu" required>
+                    <label for="password">Mật khẩu</label>
+                    <i class="bi bi-lock input-icon"></i>
+                    <div id="password-error" class="text-danger small"></div>
+                </div>
+                
+                <!-- Ẩn trường role và mặc định là customer -->
+                <input type="hidden" name="role" value="customer">
+                
+                <button type="submit" class="btn btn-register w-100">
+                    <i class="bi bi-person-plus me-2"></i>Đăng Ký
+                </button>
+            </form>
+        </div>
+        
+        <div class="register-footer">
+            <p class="mb-0">Đã có tài khoản? <a href="{% url 'frontend:auth:login' %}" class="login-link">Đăng nhập ngay</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hamburgerButton = document.querySelector('.navbar-toggler');
+        if (hamburgerButton) {
+            hamburgerButton.style.display = 'none';
+        }
+        
+        const navbarMenu = document.getElementById('navbarNav');
+        if (navbarMenu) {
+            navbarMenu.style.display = 'none';
+        }
+
+        // Validate form in frontend
+        const form = document.getElementById('registerForm');
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const phone = document.getElementById('phone');
+        const password = document.getElementById('password');
+        const usernameError = document.getElementById('username-error');
+        const emailError = document.getElementById('email-error');
+        const phoneError = document.getElementById('phone-error');
+        const passwordError = document.getElementById('password-error');
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validatePhone(phone) {
+            const re = /^(0[1-9][0-9]{8,9})$/;
+            return re.test(phone);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+
+            if (username.value.length < 3) {
+                usernameError.textContent = 'Tên đăng nhập phải có ít nhất 3 ký tự.';
+                isValid = false;
+            } else {
+                usernameError.textContent = '';
+            }
+
+            if (!validateEmail(email.value)) {
+                emailError.textContent = 'Email không hợp lệ.';
+                isValid = false;
+            } else {
+                emailError.textContent = '';
+            }
+
+            if (!validatePhone(phone.value)) {
+                phoneError.textContent = 'Số điện thoại không hợp lệ (10-11 số, bắt đầu bằng 0).';
+                isValid = false;
+            } else {
+                phoneError.textContent = '';
+            }
+
+            if (!validatePassword(password.value)) {
+                passwordError.textContent = 'Mật khẩu phải có ít nhất 6 ký tự.';
+                isValid = false;
+            } else {
+                passwordError.textContent = '';
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

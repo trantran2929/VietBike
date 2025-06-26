@@ -1,0 +1,529 @@
+/* Complaint Page Styles */
+.complaint-wrapper {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  min-height: 100vh;
+  padding: 100px 0 50px;
+}
+
+.complaint-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.complaint-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0d8075;
+  margin-bottom: 10px;
+}
+
+.complaint-subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  opacity: 0.9;
+}
+
+.complaint-card {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.complaint-form {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+}
+
+.form-section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #0d8075;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e9ecef;
+  position: relative;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background: #0d8075;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-select,
+.form-control {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.form-select:focus,
+.form-control:focus {
+  border-color: #0d8075;
+  box-shadow: 0 0 0 0.2rem rgba(13, 128, 117, 0.25);
+  outline: none;
+}
+
+.form-control {
+  resize: vertical;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Priority Options */
+.priority-options {
+  display: flex;
+  gap: 20px;
+}
+
+.priority-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 15px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.priority-option:hover {
+  background: #f8f9fa;
+}
+
+.priority-option input[type="radio"] {
+  display: none;
+}
+
+.priority-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 8px;
+  border: 2px solid #ddd;
+  transition: all 0.3s ease;
+}
+
+.priority-indicator.low {
+  background: #28a745;
+}
+
+.priority-indicator.medium {
+  background: #ffc107;
+}
+
+.priority-indicator.high {
+  background: #dc3545;
+}
+
+.priority-option input[type="radio"]:checked + .priority-indicator {
+  border-color: #0d8075;
+  box-shadow: 0 0 0 3px rgba(13, 128, 117, 0.2);
+}
+
+.priority-text {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Contact Options */
+.contact-options {
+  display: flex;
+  gap: 15px;
+}
+
+.contact-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 15px;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.contact-option:hover {
+  border-color: #0d8075;
+  background: rgba(13, 128, 117, 0.05);
+}
+
+.contact-option input[type="radio"] {
+  display: none;
+}
+
+.contact-option input[type="radio"]:checked + .contact-icon {
+  color: #0d8075;
+}
+
+.contact-option input[type="radio"]:checked ~ .contact-text {
+  color: #0d8075;
+  font-weight: 600;
+}
+
+.contact-icon {
+  font-size: 1.5rem;
+  color: #666;
+  margin-bottom: 8px;
+  transition: color 0.3s ease;
+}
+
+.contact-text {
+  font-size: 0.9rem;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+/* File Upload */
+.file-upload {
+  margin-top: 10px;
+}
+
+.file-drop-zone {
+  border: 2px dashed #ddd;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.file-drop-zone:hover,
+.file-drop-zone.dragover {
+  border-color: #0d8075;
+  background: rgba(13, 128, 117, 0.05);
+}
+
+.file-drop-content i {
+  font-size: 2rem;
+  color: #0d8075;
+  margin-bottom: 10px;
+}
+
+.file-drop-content p {
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.file-browse {
+  color: #0d8075;
+  font-weight: 600;
+}
+
+.file-drop-content small {
+  color: #666;
+}
+
+.file-drop-zone input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-list {
+  margin-top: 15px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+}
+
+.file-info i {
+  margin-right: 10px;
+  color: #0d8075;
+}
+
+.file-name {
+  font-weight: 500;
+  margin-right: 10px;
+}
+
+.file-size {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.file-remove {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.file-remove:hover {
+  background: #dc3545;
+  color: white;
+}
+
+/* Checkbox */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 5px;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+  background-color: #e9ecef;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #0d8075;
+  border-color: #0d8075;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-text {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn i {
+  margin-right: 8px;
+  font-size: 1.1rem;
+}
+
+.btn-cancel {
+  background: white;
+  color: #6c757d;
+  border: 2px solid #e9ecef;
+}
+
+.btn-cancel:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #0d8075 0%, #095e56 100%);
+  color: white;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(13, 128, 117, 0.3);
+}
+
+.btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Complaint Info */
+.complaint-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.info-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: rgba(13, 128, 117, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  font-size: 1.5rem;
+  color: #0d8075;
+}
+
+.info-content h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.info-content p {
+  color: #666;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.alert-modern {
+  border: none;
+  border-radius: 15px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  color: #721c24;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .complaint-card {
+    grid-template-columns: 1fr;
+  }
+
+  .complaint-info {
+    order: -1;
+  }
+
+  .info-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .info-icon {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .complaint-wrapper {
+    padding: 80px 0 30px;
+  }
+
+  .complaint-title {
+    font-size: 2rem;
+  }
+
+  .complaint-form {
+    padding: 30px 20px;
+  }
+
+  .priority-options,
+  .contact-options {
+    flex-direction: column;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

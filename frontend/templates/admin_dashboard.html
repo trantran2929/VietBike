@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quản Trị Viên - VietBike{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper">
+    <div class="container-fluid">
+        <div class="admin-header">
+            <h2 class="admin-title">Bảng Điều Khiển Quản Trị</h2>
+            <p class="admin-subtitle">Quản lý hệ thống VietBike</p>
+        </div>
+        
+        {% if messages %}
+            <div class="container mb-4">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-modern alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>{{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- Dashboard Stats -->
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-icon rides">
+                    <i class="bi bi-bicycle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Tổng số chuyến</h3>
+                    <p class="stat-number">{{ total_rides|default:'0' }}</p>
+                    <span class="stat-change positive">+12% so với tháng trước</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon completed">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Chuyến hoàn thành</h3>
+                    <p class="stat-number">{{ completed_rides|default:'0' }}</p>
+                    <span class="stat-change positive">+8% so với tháng trước</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon revenue">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Doanh thu</h3>
+                    <p class="stat-number">{{ total_revenue|default:'0' }}đ</p>
+                    <span class="stat-change positive">+15% so với tháng trước</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon drivers">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Tài xế hoạt động</h3>
+                    <p class="stat-number">{{ active_drivers|default:'0' }}</p>
+                    <span class="stat-change neutral">Không đổi</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="admin-content">
+            <!-- Recent Rides Section -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3 class="section-title">Chuyến Đi Gần Đây</h3>
+                    <a href="{% url 'frontend:admin:rides' %}" class="btn btn-outline">
+                        <i class="bi bi-eye"></i>
+                        Xem tất cả
+                    </a>
+                </div>
+                
+                <div class="rides-list">
+                    {% if recent_rides %}
+                        {% for ride in recent_rides %}
+                        <div class="ride-card">
+                            <div class="ride-header">
+                                <div class="ride-id">
+                                    <i class="bi bi-hash"></i>
+                                    <span>{{ ride.id }}</span>
+                                </div>
+                                <div class="ride-status status-completed">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Hoàn thành</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ride-participants">
+                                <div class="participant">
+                                    <div class="participant-icon customer">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                    <div class="participant-info">
+                                        <span class="participant-label">Khách hàng</span>
+                                        <span class="participant-name">{{ ride.customer.username|default:'Chưa có' }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="participant">
+                                    <div class="participant-icon driver">
+                                        <i class="bi bi-person-gear"></i>
+                                    </div>
+                                    <div class="participant-info">
+                                        <span class="participant-label">Tài xế</span>
+                                        <span class="participant-name">{{ ride.driver.username|default:'Chưa có' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="ride-route">
+                                <div class="route-point pickup">
+                                    <div class="route-dot"></div>
+                                    <div class="route-info">
+                                        <span class="route-label">Điểm đón</span>
+                                        <span class="route-address">
+                                            {% if ride.start_location.latitude and ride.start_location.longitude %}
+                                                {{ ride.start_location.latitude }}, {{ ride.start_location.longitude }}
+                                            {% else %}
+                                                Chưa có thông tin
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="route-line"></div>
+                                
+                                <div class="route-point destination">
+                                    <div class="route-dot"></div>
+                                    <div class="route-info">
+                                        <span class="route-label">Điểm đến</span>
+                                        <span class="route-address">
+                                            {% if ride.end_location.latitude and ride.end_location.longitude %}
+                                                {{ ride.end_location.latitude }}, {{ ride.end_location.longitude }}
+                                            {% else %}
+                                                Chưa có thông tin
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="ride-fare">
+                                <i class="bi bi-cash"></i>
+                                <span>{{ ride.fare|default:'0' }} VNĐ</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="bi bi-calendar-x"></i>
+                            </div>
+                            <h3>Không có chuyến đi gần đây</h3>
+                            <p>Hiện tại không có chuyến đi nào trong hệ thống.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3 class="section-title">Thao Tác Nhanh</h3>
+                </div>
+                
+                <div class="quick-actions">
+                    <a href="{% url 'frontend:admin:pending_drivers' %}" class="action-card primary">
+                        <div class="action-icon">
+                            <i class="bi bi-person-plus"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Hồ Sơ Tài Xế</h4>
+                            <p>Duyệt đơn đăng ký tài xế</p>
+                        </div>
+                        <div class="action-arrow">
+                            <i class="bi bi-arrow-right"></i>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'frontend:admin:users' %}" class="action-card secondary">
+                        <div class="action-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Quản Lý Người Dùng</h4>
+                            <p>Xem và quản lý tài khoản</p>
+                        </div>
+                        <div class="action-arrow">
+                            <i class="bi bi-arrow-right"></i>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'frontend:admin:rides' %}" class="action-card tertiary">
+                        <div class="action-icon">
+                            <i class="bi bi-bicycle"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Quản Lý Chuyến Đi</h4>
+                            <p>Theo dõi tất cả chuyến đi</p>
+                        </div>
+                        <div class="action-arrow">
+                            <i class="bi bi-arrow-right"></i>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'frontend:home' %}" class="action-card neutral">
+                        <div class="action-icon">
+                            <i class="bi bi-house"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Về Trang Chủ</h4>
+                            <p>Quay lại trang chính</p>
+                        </div>
+                        <div class="action-arrow">
+                            <i class="bi bi-arrow-right"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to stat cards
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add('animate-in');
+        });
+        
+        // Add hover effects to action cards
+        const actionCards = document.querySelectorAll('.action-card');
+        actionCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
+{% endblock %}

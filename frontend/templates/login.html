@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Đăng Nhập - VietBike{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-icon">
+                <i class="bi bi-bicycle"></i>
+            </div>
+            <h2 class="login-title">Chào mừng trở lại</h2>
+            <p class="login-subtitle">Đăng nhập vào tài khoản VietBike của bạn</p>
+        </div>
+        
+        <div class="login-body">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-modern">
+                    <i class="bi bi-{% if message.tags == 'error' %}exclamation-triangle{% else %}check-circle{% endif %} me-2"></i>{{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <form method="post" action="{% url 'frontend:auth:login' %}">
+                {% csrf_token %}
+                <div class="form-floating">
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Email" required value="{{ email|default:'' }}">
+                    <label for="email">Địa chỉ email</label>
+                    <i class="bi bi-envelope input-icon"></i>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Mật khẩu" required>
+                    <label for="password">Mật khẩu</label>
+                    <i class="bi bi-lock input-icon"></i>
+                </div>
+                
+                <button type="submit" class="btn btn-login">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Đăng Nhập
+                </button>
+            </form>
+        </div>
+        
+        <div class="login-footer">
+            <p class="mb-0">Chưa có tài khoản? <a href="{% url 'frontend:auth:register_user' %}" class="register-link">Đăng ký ngay</a></p>
+            <p class="mb-0"><a href="#" class="forgot-password-link">Quên mật khẩu?</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hamburgerButton = document.querySelector('.navbar-toggler');
+        if (hamburgerButton) {
+            hamburgerButton.style.display = 'none';
+        }
+        
+        const navbarMenu = document.getElementById('navbarNav');
+        if (navbarMenu) {
+            navbarMenu.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

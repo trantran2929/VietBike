@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Giới thiệu - VietBike{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="about-wrapper">
+    <div class="about-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Về VietBike</h1>
+                <p class="hero-subtitle">Nền tảng đặt xe công nghệ hàng đầu tại Việt Nam, mang đến trải nghiệm di chuyển nhanh chóng, tiện lợi và an toàn cho mọi người.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="about-section">
+            <div class="section-icon">
+                <i class="bi bi-bullseye"></i>
+            </div>
+            <h2 class="section-title">Sứ mệnh của chúng tôi</h2>
+            <div class="section-content">
+                <p>Chúng tôi cam kết cung cấp dịch vụ vận chuyển chất lượng cao, kết nối khách hàng và tài xế một cách hiệu quả, đồng thời góp phần xây dựng một hệ thống giao thông hiện đại và bền vững.</p>
+                <p>VietBike không chỉ là một ứng dụng đặt xe, mà còn là cầu nối giúp cộng đồng di chuyển thông minh hơn, an toàn hơn và thân thiện với môi trường hơn.</p>
+            </div>
+        </div>
+        
+        <div class="about-section">
+            <div class="section-icon">
+                <i class="bi bi-star"></i>
+            </div>
+            <h2 class="section-title">Tại sao chọn VietBike?</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="bi bi-phone"></i>
+                    </div>
+                    <h3 class="feature-title">Đặt xe dễ dàng</h3>
+                    <p class="feature-description">Chỉ với vài thao tác đơn giản trên điện thoại, bạn đã có thể đặt xe ngay lập tức.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h3 class="feature-title">Tài xế chuyên nghiệp</h3>
+                    <p class="feature-description">Đội ngũ tài xế được đào tạo bài bản, tận tâm và có kinh nghiệm lâu năm.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                    <h3 class="feature-title">Giá cả minh bạch</h3>
+                    <p class="feature-description">Không có phí ẩn, giá cước được tính toán rõ ràng và công khai.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <h3 class="feature-title">Hỗ trợ 24/7</h3>
+                    <p class="feature-description">Đội ngũ chăm sóc khách hàng luôn sẵn sàng hỗ trợ bạn mọi lúc, mọi nơi.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="contact-section">
+            <h2 class="contact-title">Liên hệ với chúng tôi</h2>
+            <p>Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn. Hãy liên hệ với VietBike qua các kênh sau:</p>
+            
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <div class="contact-label">Email</div>
+                    <div class="contact-value">support@vietbike.vn</div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="bi bi-telephone"></i>
+                    </div>
+                    <div class="contact-label">Hotline</div>
+                    <div class="contact-value">1900 1234</div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <div class="contact-label">Địa chỉ</div>
+                    <div class="contact-value">123 Đường Nguyễn Huệ<br>TP. Đà Nẵng, Việt Nam</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

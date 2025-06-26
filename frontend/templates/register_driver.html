@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Đăng Ký Tài Xế - VietBike{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/register_driver.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="driver-register-wrapper">
+    <div class="container">
+        <div class="register-header">
+            <h2 class="register-title">Đăng Ký Trở Thành Tài Xế</h2>
+            <p class="register-subtitle">Tham gia đội ngũ tài xế VietBike và tăng thu nhập của bạn</p>
+        </div>
+        
+        <div class="register-card">
+            <div class="register-steps">
+                <div class="step active">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Thông tin cá nhân</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Thông tin xe</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Xác minh</div>
+                </div>
+            </div>
+            
+            <form id="driverForm" method="post" enctype="multipart/form-data" class="register-form">
+                {% csrf_token %}
+                
+                <div class="form-section" id="personalInfo">
+                    <h3 class="section-title">Thông tin cá nhân</h3>
+                    
+                    <div class="form-group">
+                        <label for="id_number">Số CMND/CCCD</label>
+                        <div class="input-group">
+                            <span class="input-icon"><i class="bi bi-card-text"></i></span>
+                            <input type="text" class="form-control" name="id_number" id="id_number" placeholder="Nhập số CMND/CCCD" required>
+                        </div>
+                        <div id="id-number-error" class="text-danger small"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="license_number">Số bằng lái xe</label>
+                        <div class="input-group">
+                            <span class="input-icon"><i class="bi bi-card-heading"></i></span>
+                            <input type="text" class="form-control" name="license_number" id="license_number" placeholder="Nhập số bằng lái xe" required>
+                        </div>
+                        <div id="license-number-error" class="text-danger small"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="driver_license">Bằng lái xe (hình ảnh)</label>
+                        <div class="file-upload">
+                            <div class="file-select">
+                                <div class="file-select-button" id="fileName">Chọn file</div>
+                                <div class="file-select-name" id="noFile">Chưa chọn file...</div>
+                                <input type="file" name="driver_license" id="driver_license" accept="image/*" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-next" id="nextToVehicle">
+                            Tiếp theo
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-section" id="vehicleInfo" style="display: none;">
+                    <h3 class="section-title">Thông tin xe</h3>
+                    
+                    <div class="form-group">
+                        <label for="vehicle_photo">Ảnh xe</label>
+                        <div class="file-upload">
+                            <div class="file-select">
+                                <div class="file-select-button">Chọn file</div>
+                                <div class="file-select-name">Chưa chọn file...</div>
+                                <input type="file" name="vehicle_photo" id="vehicle_photo" accept="image/*" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="license_plate">Biển số xe</label>
+                        <div class="input-group">
+                            <span class="input-icon"><i class="bi bi-car-front"></i></span>
+                            <input type="text" class="form-control" name="license_plate" id="license_plate" placeholder="Nhập biển số xe" required>
+                        </div>
+                        <div id="license-plate-error" class="text-danger small"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="brand">Hãng xe</label>
+                        <div class="input-group">
+                            <span class="input-icon"><i class="bi bi-tag"></i></span>
+                            <input type="text" class="form-control" name="brand" id="brand" placeholder="Nhập hãng xe" required>
+                        </div>
+                        <div id="brand-error" class="text-danger small"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="model">Mẫu xe</label>
+                        <div class="input-group">
+                            <span class="input-icon"><i class="bi bi-bicycle"></i></span>
+                            <input type="text" class="form-control" name="model" id="model" placeholder="Nhập mẫu xe" required>
+                        </div>
+                        <div id="model-error" class="text-danger small"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="year">Năm sản xuất</label>
+                        <div class="input-group">
+                            <span class="input-icon"><i class="bi bi-calendar"></i></span>
+                            <input type="number" class="form-control" name="year" id="year" placeholder="Nhập năm sản xuất" required>
+                        </div>
+                        <div id="year-error" class="text-danger small"></div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-back" id="backToPersonal">
+                            <i class="bi bi-arrow-left"></i>
+                            Quay lại
+                        </button>
+                        <button type="button" class="btn btn-next" id="nextToVerify">
+                            Tiếp theo
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-section" id="verifyInfo" style="display: none;">
+                    <h3 class="section-title">Xác minh thông tin</h3>
+                    
+                    <div class="verify-message">
+                        <div class="verify-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <p>Vui lòng kiểm tra lại thông tin trước khi gửi đăng ký. Sau khi gửi, chúng tôi sẽ xác minh thông tin của bạn và thông báo kết quả qua email.</p>
+                    </div>
+                    
+                    <div class="terms-check">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="termsCheck" required>
+                            <span class="checkmark"></span>
+                            <span class="terms-text">Tôi đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách bảo mật</a> của VietBike</span>
+                        </label>
+                    </div>
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-modern">
+                                <i class="bi bi-info-circle me-2"></i>{{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-back" id="backToVehicle">
+                            <i class="bi bi-arrow-left"></i>
+                            Quay lại
+                        </button>
+                        <button type="submit" class="btn btn-submit" id="submitForm">
+                            <i class="bi bi-check-lg"></i>
+                            Hoàn tất đăng ký
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // File upload preview
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.addEventListener('change', function(e) {
+                const fileName = e.target.value.split('\\').pop();
+                const fileSelectName = this.parentElement.querySelector('.file-select-name');
+                if (fileName) {
+                    fileSelectName.textContent = fileName;
+                } else {
+                    fileSelectName.textContent = 'Chưa chọn file...';
+                }
+            });
+        });
+        
+        // Form navigation
+        const personalSection = document.getElementById('personalInfo');
+        const vehicleSection = document.getElementById('vehicleInfo');
+        const verifySection = document.getElementById('verifyInfo');
+        const steps = document.querySelectorAll('.step');
+        
+        // Validation functions
+        function validateIdNumber(idNumber) {
+            const re = /^\d{9,12}$/;
+            return re.test(idNumber);
+        }
+
+        function validateLicenseNumber(licenseNumber) {
+            const re = /^\d{10,12}$/;
+            return re.test(licenseNumber);
+        }
+
+        function validateLicensePlate(plate) {
+            const re = /^[0-9A-Z]{2,4}-[0-9A-Z]{4,6}$/;
+            return re.test(plate);
+        }
+
+        function validateYear(year) {
+            const currentYear = new Date().getFullYear();
+            return year >= 2000 && year <= currentYear;
+        }
+
+        document.getElementById('nextToVehicle').addEventListener('click', function() {
+            // Validate personal info
+            const idNumber = document.getElementById('id_number');
+            const licenseNumber = document.getElementById('license_number');
+            const idNumberError = document.getElementById('id-number-error');
+            const licenseNumberError = document.getElementById('license-number-error');
+            let isValid = true;
+
+            if (!validateIdNumber(idNumber.value)) {
+                idNumberError.textContent = 'Số CMND/CCCD không hợp lệ (9-12 số).';
+                idNumber.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                idNumberError.textContent = '';
+                idNumber.classList.remove('is-invalid');
+            }
+
+            if (!validateLicenseNumber(licenseNumber.value)) {
+                licenseNumberError.textContent = 'Số bằng lái xe không hợp lệ (10-12 số).';
+                licenseNumber.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                licenseNumberError.textContent = '';
+                licenseNumber.classList.remove('is-invalid');
+            }
+
+            const personalInputs = personalSection.querySelectorAll('input[required]');
+            personalInputs.forEach(input => {
+                if (!input.value) {
+                    isValid = false;
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            if (isValid) {
+                personalSection.style.display = 'none';
+                vehicleSection.style.display = 'block';
+                steps[0].classList.remove('active');
+                steps[1].classList.add('active');
+                window.scrollTo(0, 0);
+            }
+        });
+        
+        document.getElementById('backToPersonal').addEventListener('click', function() {
+            vehicleSection.style.display = 'none';
+            personalSection.style.display = 'block';
+            steps[1].classList.remove('active');
+            steps[0].classList.add('active');
+            window.scrollTo(0, 0);
+        });
+        
+        document.getElementById('nextToVerify').addEventListener('click', function() {
+            // Validate vehicle info
+            const licensePlate = document.getElementById('license_plate');
+            const brand = document.getElementById('brand');
+            const model = document.getElementById('model');
+            const year = document.getElementById('year');
+            const licensePlateError = document.getElementById('license-plate-error');
+            const brandError = document.getElementById('brand-error');
+            const modelError = document.getElementById('model-error');
+            const yearError = document.getElementById('year-error');
+            let isValid = true;
+
+            if (!validateLicensePlate(licensePlate.value)) {
+                licensePlateError.textContent = 'Biển số xe không hợp lệ (VD: 92AA-38194).';
+                licensePlate.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                licensePlateError.textContent = '';
+                licensePlate.classList.remove('is-invalid');
+            }
+
+            if (brand.value.length < 2) {
+                brandError.textContent = 'Hãng xe phải có ít nhất 2 ký tự.';
+                brand.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                brandError.textContent = '';
+                brand.classList.remove('is-invalid');
+            }
+
+            if (model.value.length < 2) {
+                modelError.textContent = 'Model xe phải có ít nhất 2 ký tự.';
+                model.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                modelError.textContent = '';
+                model.classList.remove('is-invalid');
+            }
+
+            if (!validateYear(year.value)) {
+                yearError.textContent = 'Năm sản xuất không hợp lệ (2000 đến hiện tại).';
+                year.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                yearError.textContent = '';
+                year.classList.remove('is-invalid');
+            }
+
+            const vehicleInputs = vehicleSection.querySelectorAll('input[required]');
+            vehicleInputs.forEach(input => {
+                if (!input.value) {
+                    isValid = false;
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            if (isValid) {
+                vehicleSection.style.display = 'none';
+                verifySection.style.display = 'block';
+                steps[1].classList.remove('active');
+                steps[2].classList.add('active');
+                window.scrollTo(0, 0);
+            }
+        });
+        
+        document.getElementById('backToVehicle').addEventListener('click', function() {
+            verifySection.style.display = 'none';
+            vehicleSection.style.display = 'block';
+            steps[2].classList.remove('active');
+            steps[1].classList.add('active');
+            window.scrollTo(0, 0);
+        });
+        
+        // Form submission validation
+        document.getElementById('driverForm').addEventListener('submit', function(e) {
+            if (!document.getElementById('termsCheck').checked) {
+                e.preventDefault();
+                alert('Vui lòng đồng ý với điều khoản dịch vụ và chính sách bảo mật.');
+            }
+        });
+    });
+</script>
+{% endblock %}

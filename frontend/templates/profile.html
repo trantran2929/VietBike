@@ -1,0 +1,506 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hồ Sơ Cá Nhân - VietBike{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-wrapper">
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="profile-hero">
+            <div class="hero-background">
+                <div class="hero-pattern"></div>
+            </div>
+            <div class="hero-content">
+                <div class="profile-avatar-section">
+                    <div class="avatar-container">
+                        <img src="{% if profile.profile_picture %}{{ profile.profile_picture }}{% else %}https://english.uccs.edu/sites/default/files/2020-12/placeholder.jpg{% endif %}" 
+                             alt="Ảnh đại diện" class="profile-avatar" id="profileImage">
+                        <div class="avatar-overlay">
+                            <i class="bi bi-camera-fill"></i>
+                        </div>
+                        <div class="avatar-status online"></div>
+                    </div>
+                    <div class="avatar-actions">
+                        <label for="uploadImage" class="btn-avatar btn-upload">
+                            <i class="bi bi-cloud-upload"></i>
+                        </label>
+                        <input type="file" id="uploadImage" name="profile_picture" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                        <button type="button" class="btn-avatar btn-remove" onclick="removeImage()">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-name">{{ profile.username|default:'Người dùng VietBike' }}</h1>
+                    <div class="profile-role">
+                        <span class="role-badge {{ profile.role }}">
+                            {% if profile.role == 'customer' %}
+                                <i class="bi bi-person-circle"></i>
+                                Khách hàng
+                            {% else %}
+                                <i class="bi bi-person-gear"></i>
+                                Tài xế
+                            {% endif %}
+                        </span>
+                    </div>
+                    <p class="profile-subtitle">Thành viên từ {{ profile.date_joined|date:"M Y"|default:'2024' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            <div class="messages-section">
+                {% for message in messages %}
+                    <div class="message-card {{ message.tags }}">
+                        <div class="message-icon">
+                            <i class="bi bi-{% if message.tags == 'error' %}exclamation-triangle{% elif message.tags == 'success' %}check-circle{% else %}info-circle{% endif %}"></i>
+                        </div>
+                        <div class="message-content">
+                            <span>{{ message }}</span>
+                        </div>
+                        <button class="message-close" onclick="this.parentElement.remove()">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Main Content -->
+        <div class="profile-content">
+            <div class="content-grid">
+                <!-- Personal Information -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="header-icon">
+                            <i class="bi bi-person-lines-fill"></i>
+                        </div>
+                        <div class="header-text">
+                            <h3>Thông tin cá nhân</h3>
+                            <p>Cập nhật thông tin tài khoản của bạn</p>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <form id="profileForm" method="post" enctype="multipart/form-data" action="{% url 'frontend:auth:profile' %}">
+                            {% csrf_token %}
+                            
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="text" class="modern-input" name="username" id="username" 
+                                           value="{{ profile.username|default:'' }}" placeholder=" " readonly>
+                                    <label class="input-label">Tên đăng nhập</label>
+                                    <div class="input-icon">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                    <div class="input-lock">
+                                        <i class="bi bi-lock-fill"></i>
+                                    </div>
+                                </div>
+                                <small class="input-help">Tên đăng nhập không thể thay đổi</small>
+                            </div>
+                            
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="email" class="modern-input" name="email" id="email" 
+                                           value="{{ profile.email|default:'' }}" placeholder=" " required>
+                                    <label class="input-label">Địa chỉ email</label>
+                                    <div class="input-icon">
+                                        <i class="bi bi-envelope"></i>
+                                    </div>
+                                </div>
+                                <div id="email-error" class="input-error"></div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="tel" class="modern-input" name="phone" id="phone" 
+                                           value="{{ profile.phone|default:'' }}" placeholder=" " required>
+                                    <label class="input-label">Số điện thoại</label>
+                                    <div class="input-icon">
+                                        <i class="bi bi-telephone"></i>
+                                    </div>
+                                </div>
+                                <div id="phone-error" class="input-error"></div>
+                            </div>
+                            
+                            <input type="hidden" id="remove_image" name="remove_image" value="false">
+                            <button type="submit" class="btn-modern btn-primary">
+                                <span class="btn-text">Lưu thay đổi</span>
+                                <div class="btn-icon">
+                                    <i class="bi bi-check-lg"></i>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Password Change -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="header-icon">
+                            <i class="bi bi-shield-lock"></i>
+                        </div>
+                        <div class="header-text">
+                            <h3>Bảo mật tài khoản</h3>
+                            <p>Thay đổi mật khẩu để bảo vệ tài khoản</p>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <form id="passwordForm" method="post" action="{% url 'frontend:auth:profile' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="change_password">
+                            
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="password" class="modern-input" name="old_password" id="old_password" 
+                                           placeholder=" " required>
+                                    <label class="input-label">Mật khẩu hiện tại</label>
+                                    <div class="input-icon">
+                                        <i class="bi bi-lock"></i>
+                                    </div>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('old_password')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="password" class="modern-input" name="new_password" id="new_password" 
+                                           placeholder=" " required>
+                                    <label class="input-label">Mật khẩu mới</label>
+                                    <div class="input-icon">
+                                        <i class="bi bi-key"></i>
+                                    </div>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('new_password')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-strength">
+                                    <div class="strength-bar">
+                                        <div class="strength-fill"></div>
+                                    </div>
+                                    <span class="strength-text">Nhập mật khẩu để kiểm tra độ mạnh</span>
+                                </div>
+                                <div id="password-error" class="input-error"></div>
+                            </div>
+                            
+                            <button type="submit" class="btn-modern btn-warning">
+                                <span class="btn-text">Đổi mật khẩu</span>
+                                <div class="btn-icon">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Account Stats -->
+                <div class="glass-card stats-card">
+                    <div class="card-header">
+                        <div class="header-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <div class="header-text">
+                            <h3>Thống kê tài khoản</h3>
+                            <p>Hoạt động của bạn trên VietBike</p>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-icon rides">
+                                    <i class="bi bi-bicycle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-number">0</span>
+                                    <span class="stat-label">Chuyến đi</span>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon rating">
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-number">5.0</span>
+                                    <span class="stat-label">Đánh giá</span>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon savings">
+                                    <i class="bi bi-piggy-bank"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-number">0đ</span>
+                                    <span class="stat-label">Tiết kiệm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Driver Registration CTA -->
+                {% if profile.role == 'customer' %}
+                <div class="glass-card cta-card">
+                    <div class="cta-background">
+                        <div class="cta-pattern"></div>
+                    </div>
+                    <div class="cta-content">
+                        <div class="cta-icon">
+                            <i class="bi bi-person-plus-fill"></i>
+                        </div>
+                        <div class="cta-text">
+                            <h3>Trở thành tài xế VietBike</h3>
+                            <p>Tham gia đội ngũ tài xế và tăng thu nhập hàng ngày</p>
+                        </div>
+                        <a href="{% url 'frontend:driver:register_driver' %}" class="btn-modern btn-success">
+                            <span class="btn-text">Đăng ký ngay</span>
+                            <div class="btn-icon">
+                                <i class="bi bi-arrow-right"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Enhanced form validation
+    document.getElementById('profileForm').addEventListener('submit', function(event) {
+        const uploadInput = document.getElementById('uploadImage');
+        const file = uploadInput.files[0];
+        if (file && file.size > 5 * 1024 * 1024) {
+            event.preventDefault();
+            showMessage('File ảnh quá lớn. Vui lòng chọn file nhỏ hơn 5MB.', 'error');
+            return;
+        }
+
+        if (!validateEmail() || !validatePhone()) {
+            event.preventDefault();
+        }
+    });
+
+    document.getElementById('passwordForm').addEventListener('submit', function(event) {
+        if (!validatePassword()) {
+            event.preventDefault();
+        }
+    });
+
+    function validateEmail() {
+        const email = document.getElementById('email');
+        const emailError = document.getElementById('email-error');
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!emailPattern.test(email.value)) {
+            emailError.textContent = 'Email không hợp lệ';
+            email.classList.add('error');
+            return false;
+        } else {
+            emailError.textContent = '';
+            email.classList.remove('error');
+            return true;
+        }
+    }
+
+    function validatePhone() {
+        const phone = document.getElementById('phone');
+        const phoneError = document.getElementById('phone-error');
+        const phonePattern = /^(0[1-9][0-9]{8,9})$/;
+        
+        if (!phonePattern.test(phone.value)) {
+            phoneError.textContent = 'Số điện thoại không hợp lệ (10-11 số, bắt đầu bằng 0)';
+            phone.classList.add('error');
+            return false;
+        } else {
+            phoneError.textContent = '';
+            phone.classList.remove('error');
+            return true;
+        }
+    }
+
+    function validatePassword() {
+        const newPassword = document.getElementById('new_password');
+        const passwordError = document.getElementById('password-error');
+        
+        if (newPassword.value.length < 6) {
+            passwordError.textContent = 'Mật khẩu mới phải có ít nhất 6 ký tự';
+            newPassword.classList.add('error');
+            return false;
+        } else {
+            passwordError.textContent = '';
+            newPassword.classList.remove('error');
+            return true;
+        }
+    }
+
+    // Real-time validation
+    document.getElementById('email').addEventListener('blur', validateEmail);
+    document.getElementById('phone').addEventListener('blur', validatePhone);
+    document.getElementById('new_password').addEventListener('input', function() {
+        updatePasswordStrength(this.value);
+        validatePassword();
+    });
+
+    function updatePasswordStrength(password) {
+        const strengthBar = document.querySelector('.strength-fill');
+        const strengthText = document.querySelector('.strength-text');
+        
+        let strength = 0;
+        let text = 'Rất yếu';
+        let color = '#ff4757';
+        
+        if (password.length >= 6) strength += 1;
+        if (password.match(/[a-z]/)) strength += 1;
+        if (password.match(/[A-Z]/)) strength += 1;
+        if (password.match(/[0-9]/)) strength += 1;
+        if (password.match(/[^a-zA-Z0-9]/)) strength += 1;
+        
+        switch(strength) {
+            case 0:
+            case 1:
+                text = 'Rất yếu';
+                color = '#ff4757';
+                break;
+            case 2:
+                text = 'Yếu';
+                color = '#ff6b35';
+                break;
+            case 3:
+                text = 'Trung bình';
+                color = '#ffa502';
+                break;
+            case 4:
+                text = 'Mạnh';
+                color = '#26de81';
+                break;
+            case 5:
+                text = 'Rất mạnh';
+                color = '#20bf6b';
+                break;
+        }
+        
+        strengthBar.style.width = (strength * 20) + '%';
+        strengthBar.style.background = `linear-gradient(90deg, ${color}, ${color}aa)`;
+        strengthText.textContent = text;
+        strengthText.style.color = color;
+    }
+
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                showMessage('File ảnh quá lớn. Vui lòng chọn file nhỏ hơn 5MB.', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profileImage').src = e.target.result;
+                document.getElementById('remove_image').value = 'false';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    function removeImage() {
+        document.getElementById('profileImage').src = 'https://english.uccs.edu/sites/default/files/2020-12/placeholder.jpg';
+        document.getElementById('remove_image').value = 'true';
+        document.getElementById('uploadImage').value = '';
+    }
+
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const button = field.parentElement.querySelector('.password-toggle i');
+        
+        if (field.type === 'password') {
+            field.type = 'text';
+            button.className = 'bi bi-eye-slash';
+        } else {
+            field.type = 'password';
+            button.className = 'bi bi-eye';
+        }
+    }
+
+    function showMessage(message, type) {
+        const messagesSection = document.querySelector('.messages-section') || createMessagesSection();
+        const messageCard = document.createElement('div');
+        messageCard.className = `message-card ${type}`;
+        messageCard.innerHTML = `
+            <div class="message-icon">
+                <i class="bi bi-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}"></i>
+            </div>
+            <div class="message-content">
+                <span>${message}</span>
+            </div>
+            <button class="message-close" onclick="this.parentElement.remove()">
+                <i class="bi bi-x"></i>
+            </button>
+        `;
+        messagesSection.appendChild(messageCard);
+        
+        setTimeout(() => {
+            if (messageCard.parentElement) {
+                messageCard.remove();
+            }
+        }, 5000);
+    }
+
+    function createMessagesSection() {
+        const section = document.createElement('div');
+        section.className = 'messages-section';
+        document.querySelector('.profile-hero').after(section);
+        return section;
+    }
+
+    // Smooth animations on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.glass-card');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('animate-in');
+            }, index * 100);
+        });
+
+        // Animate stats
+        setTimeout(() => {
+            animateStats();
+        }, 1000);
+    });
+
+    function animateStats() {
+        const statNumbers = document.querySelectorAll('.stat-number');
+        statNumbers.forEach(stat => {
+            const finalValue = stat.textContent;
+            if (!isNaN(parseFloat(finalValue))) {
+                animateNumber(stat, 0, parseFloat(finalValue), 1000);
+            }
+        });
+    }
+
+    function animateNumber(element, start, end, duration) {
+        const startTime = performance.now();
+        const update = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const current = start + (end - start) * progress;
+            element.textContent = Math.floor(current);
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        };
+        requestAnimationFrame(update);
+    }
+</script>
+{% endblock %}

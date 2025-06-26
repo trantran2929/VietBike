@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Khiếu Nại - VietBike{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/complaint.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="complaint-wrapper">
+    <div class="container">
+        <div class="complaint-header">
+            <h2 class="complaint-title">Gửi Khiếu Nại</h2>
+            <p class="complaint-subtitle">Chúng tôi luôn lắng nghe và hỗ trợ bạn</p>
+        </div>
+        
+        <div class="complaint-card">
+            <div class="complaint-form">
+                <form id="complaintForm" method="post" action="{% url 'frontend:customer:submit_complaint' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">Thông tin khiếu nại</h3>
+                        
+                        <div class="form-group">
+                            <label for="rideSelect">Chuyến đi liên quan</label>
+                            <select id="rideSelect" name="ride_id" class="form-select" required>
+                                <option value="">Chọn chuyến đi</option>
+                                {% for ride in rides %}
+                                <option value="{{ ride.id }}">
+                                    {{ ride.start_location.latitude }}, {{ ride.start_location.longitude }} → {{ ride.end_location.latitude }}, {{ ride.end_location.longitude }} 
+                                    ({{ ride.created_at|date:"d/m/Y H:i" }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="complaintType">Loại khiếu nại</label>
+                            <select id="complaintType" name="complaint_type" class="form-select" required>
+                                <option value="">Chọn loại khiếu nại</option>
+                                <option value="driver_behavior">Thái độ tài xế</option>
+                                <option value="vehicle_condition">Tình trạng xe</option>
+                                <option value="route_issue">Vấn đề về tuyến đường</option>
+                                <option value="payment_issue">Vấn đề thanh toán</option>
+                                <option value="safety_concern">Vấn đề an toàn</option>
+                                <option value="other">Khác</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="priority">Mức độ ưu tiên</label>
+                            <div class="priority-options">
+                                <label class="priority-option">
+                                    <input type="radio" name="priority" value="low" required>
+                                    <span class="priority-indicator low"></span>
+                                    <span class="priority-text">Thấp</span>
+                                </label>
+                                <label class="priority-option">
+                                    <input type="radio" name="priority" value="medium" required>
+                                    <span class="priority-indicator medium"></span>
+                                    <span class="priority-text">Trung bình</span>
+                                </label>
+                                <label class="priority-option">
+                                    <input type="radio" name="priority" value="high" required>
+                                    <span class="priority-indicator high"></span>
+                                    <span class="priority-text">Cao</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Mô tả chi tiết</label>
+                            <textarea id="description" name="description" class="form-control" rows="5" 
+                                placeholder="Vui lòng mô tả chi tiết vấn đề bạn gặp phải..." required></textarea>
+                            <div class="char-count">
+                                <span id="charCount">0</span>/500 ký tự
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactMethod">Phương thức liên hệ phản hồi</label>
+                            <div class="contact-options">
+                                <label class="contact-option">
+                                    <input type="radio" name="contact_method" value="email" checked>
+                                    <span class="contact-icon">
+                                        <i class="bi bi-envelope"></i>
+                                    </span>
+                                    <span class="contact-text">Email</span>
+                                </label>
+                                <label class="contact-option">
+                                    <input type="radio" name="contact_method" value="phone">
+                                    <span class="contact-icon">
+                                        <i class="bi bi-telephone"></i>
+                                    </span>
+                                    <span class="contact-text">Điện thoại</span>
+                                </label>
+                                <label class="contact-option">
+                                    <input type="radio" name="contact_method" value="app">
+                                    <span class="contact-icon">
+                                        <i class="bi bi-app"></i>
+                                    </span>
+                                    <span class="contact-text">Thông báo app</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">Thông tin bổ sung</h3>
+                        
+                        <div class="form-group">
+                            <label for="evidence">Bằng chứng (tùy chọn)</label>
+                            <div class="file-upload">
+                                <div class="file-drop-zone" id="fileDropZone">
+                                    <div class="file-drop-content">
+                                        <i class="bi bi-cloud-upload"></i>
+                                        <p>Kéo thả file vào đây hoặc <span class="file-browse">chọn file</span></p>
+                                        <small>Hỗ trợ: JPG, PNG, PDF (tối đa 5MB)</small>
+                                    </div>
+                                    <input type="file" id="evidence" name="evidence" accept=".jpg,.jpeg,.png,.pdf" multiple>
+                                </div>
+                                <div class="file-list" id="fileList"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="urgentCase" name="urgent_case">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-text">Đây là trường hợp khẩn cấp cần xử lý ngay</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-modern">
+                                <i class="bi bi-info-circle me-2"></i>{{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-cancel" onclick="history.back()">
+                            <i class="bi bi-x-circle"></i>
+                            Hủy bỏ
+                        </button>
+                        <button type="submit" class="btn btn-submit" id="submitBtn">
+                            <i class="bi bi-send"></i>
+                            Gửi khiếu nại
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="complaint-info">
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                    <div class="info-content">
+                        <h4>Thời gian xử lý</h4>
+                        <p>Chúng tôi sẽ phản hồi trong vòng 24-48 giờ</p>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div class="info-content">
+                        <h4>Bảo mật thông tin</h4>
+                        <p>Thông tin của bạn được bảo mật tuyệt đối</p>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <div class="info-content">
+                        <h4>Hỗ trợ 24/7</h4>
+                        <p>Hotline: <strong>1900 1234</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const descriptionTextarea = document.getElementById('description');
+        const charCount = document.getElementById('charCount');
+        const fileDropZone = document.getElementById('fileDropZone');
+        const fileInput = document.getElementById('evidence');
+        const fileList = document.getElementById('fileList');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Character count
+        descriptionTextarea.addEventListener('input', function() {
+            const count = this.value.length;
+            charCount.textContent = count;
+            
+            if (count > 500) {
+                charCount.style.color = '#dc3545';
+                this.value = this.value.substring(0, 500);
+                charCount.textContent = '500';
+            } else {
+                charCount.style.color = '#666';
+            }
+        });
+        
+        // File upload
+        fileDropZone.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        fileDropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        fileDropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+        
+        fileDropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        });
+        
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+        
+        function handleFiles(files) {
+            fileList.innerHTML = '';
+            Array.from(files).forEach(file => {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`File ${file.name} quá lớn. Vui lòng chọn file nhỏ hơn 5MB.`);
+                    return;
+                }
+                if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+                    alert(`File ${file.name} không được hỗ trợ. Chỉ chấp nhận JPG, PNG, PDF.`);
+                    return;
+                }
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <i class="bi bi-file-earmark"></i>
+                        <span class="file-name">${file.name}</span>
+                        <span class="file-size">(${(file.size / 1024).toFixed(1)} KB)</span>
+                    </div>
+                    <button type="button" class="file-remove" onclick="this.parentElement.remove()">
+                        <i class="bi bi-x"></i>
+                    </button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+        
+        // Form submission
+        document.getElementById('complaintForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang gửi...';
+            submitBtn.disabled = true;
+            
+            const formData = new FormData(this);
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Khiếu nại đã được gửi thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
+                    window.location.href = '/history/';
+                } else {
+                    alert(data.error || 'Gửi khiếu nại thất bại.');
+                }
+            })
+            .catch(error => {
+                alert('Lỗi kết nối: ' + error);
+            })
+            .finally(() => {
+                submitBtn.innerHTML = '<i class="bi bi-send"></i> Gửi khiếu nại';
+                submitBtn.disabled = false;
+            });
+        });
+    });
+</script>
+{% endblock %}

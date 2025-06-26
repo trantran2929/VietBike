@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trang Chủ - VietBike{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Enhanced Carousel -->
+<div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div id="carouselExample" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{% static 'image/home1.jpg' %}" class="d-block w-100" alt="Slide 1">
+                <div class="carousel-caption">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Di chuyển thông minh cùng VietBike</h1>
+                        <p class="hero-subtitle">Dịch vụ xe máy ôm công nghệ hàng đầu Việt Nam</p>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">10K+</span>
+                                <span class="stat-label">Tài xế</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">50K+</span>
+                                <span class="stat-label">Khách hàng</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Phục vụ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="{% static 'image/home2.jpg' %}" class="d-block w-100" alt="Slide 2">
+                <div class="carousel-caption">
+                    <div class="hero-content">
+                        <h1 class="hero-title">An toàn - Tiện lợi - Nhanh chóng</h1>
+                        <p class="hero-subtitle">Đội ngũ tài xế chuyên nghiệp, sẵn sàng phục vụ 24/7</p>
+                        <div class="hero-features">
+                            <div class="feature-badge">
+                                <i class="bi bi-shield-check"></i>
+                                <span>100% An toàn</span>
+                            </div>
+                            <div class="feature-badge">
+                                <i class="bi bi-lightning-charge"></i>
+                                <span>Siêu nhanh</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="{% static 'image/OIP.jpg' %}" class="d-block w-100" alt="Slide 3">
+                <div class="carousel-caption">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Trải nghiệm di chuyển tuyệt vời</h1>
+                        <p class="hero-subtitle">Đặt xe ngay để cảm nhận sự khác biệt</p>
+                        <div class="hero-cta">
+                            {% if request.session.access_token %}
+                                <a href="{% url 'frontend:customer:book_ride' %}" class="btn btn-hero btn-lg">
+                                    <i class="bi bi-bicycle me-2"></i>Đặt Chuyến Ngay
+                                </a>
+                            {% else %}
+                                <a href="{% url 'frontend:auth:register_user' %}" class="btn btn-hero btn-lg">
+                                    <i class="bi bi-person-plus me-2"></i>Tham Gia Ngay
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+<div class="main-content">
+    <!-- Introduction Section -->
+    <section class="intro-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="intro-card glass-card">
+                        <div class="intro-header">
+                            <div class="intro-icon">
+                                <i class="bi bi-bicycle"></i>
+                            </div>
+                            <h2 class="intro-title">Chào mừng đến với VietBike</h2>
+                            <div class="intro-divider"></div>
+                        </div>
+                        <div class="intro-content">
+                            <p class="intro-text">
+                                VietBike là dịch vụ xe máy ôm công nghệ hàng đầu tại Việt Nam, mang đến trải nghiệm di chuyển 
+                                <span class="highlight">an toàn</span>, <span class="highlight">tiện lợi</span> và 
+                                <span class="highlight">nhanh chóng</span>. Chúng tôi kết nối khách hàng với đội ngũ tài xế chuyên nghiệp, 
+                                đảm bảo mọi chuyến đi đều thoải mái và đáng tin cậy.
+                            </p>
+                            
+                            {% if not request.session.access_token %}
+                                <div class="intro-actions">
+                                    <a href="{% url 'frontend:auth:login' %}" class="btn btn-outline-primary btn-lg">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>Đăng Nhập
+                                    </a>
+                                    <a href="{% url 'frontend:auth:register_user' %}" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-person-plus me-2"></i>Đăng Ký Ngay
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="intro-actions">
+                                    <a href="{% url 'frontend:customer:book_ride' %}" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-bicycle me-2"></i>Đặt Chuyến Ngay
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Tại sao chọn VietBike?</h2>
+                <p class="section-subtitle">Những lý do khiến hàng triệu người dùng tin tưởng VietBike</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card modern-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="feature-icon-wrapper">
+                            <div class="feature-icon safety">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">An toàn tối đa</h3>
+                            <p class="feature-description">
+                                Tất cả tài xế đều được xác minh danh tính và đánh giá thường xuyên. 
+                                Hệ thống GPS theo dõi chuyến đi 24/7.
+                            </p>
+                            <div class="feature-stats">
+                                <span class="stat-badge">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    100% Xác minh
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card modern-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="feature-icon-wrapper">
+                            <div class="feature-icon speed">
+                                <i class="bi bi-lightning-charge"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Nhanh chóng</h3>
+                            <p class="feature-description">
+                                Tìm tài xế gần bạn nhất chỉ trong vài giây. 
+                                Thuật toán thông minh giúp tối ưu thời gian di chuyển.
+                            </p>
+                            <div class="feature-stats">
+                                <span class="stat-badge">
+                                    <i class="bi bi-stopwatch"></i>
+                                    < 30 giây
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card modern-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="feature-icon-wrapper">
+                            <div class="feature-icon price">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Giá cả hợp lý</h3>
+                            <p class="feature-description">
+                                Giá cước minh bạch, không phụ phí ẩn. 
+                                Nhiều chương trình khuyến mãi hấp dẫn.
+                            </p>
+                            <div class="feature-stats">
+                                <span class="stat-badge">
+                                    <i class="bi bi-percent"></i>
+                                    Tiết kiệm 30%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="contact-card glass-card">
+                        <div class="section-header">
+                            <h2 class="section-title">Liên hệ với chúng tôi</h2>
+                            <p class="section-subtitle">Chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7</p>
+                        </div>
+                        
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="contact-item">
+                                    <div class="contact-icon">
+                                        <i class="bi bi-telephone-fill"></i>
+                                    </div>
+                                    <div class="contact-content">
+                                        <h4 class="contact-title">Hotline</h4>
+                                        <p class="contact-info">1900 1234</p>
+                                        <span class="contact-note">Hoạt động 24/7</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="contact-item">
+                                    <div class="contact-icon">
+                                        <i class="bi bi-envelope-fill"></i>
+                                    </div>
+                                    <div class="contact-content">
+                                        <h4 class="contact-title">Email</h4>
+                                        <p class="contact-info">
+                                            <a href="mailto:support@vietbike.vn">support@vietbike.vn</a>
+                                        </p>
+                                        <span class="contact-note">Phản hồi trong 24h</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-cta">
+                            <p class="cta-text">Bạn cần hỗ trợ ngay?</p>
+                            <a href="tel:19001234" class="btn btn-primary btn-lg">
+                                <i class="bi bi-telephone me-2"></i>Gọi ngay
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/home.js' %}"></script>
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+    </script>
+{% endblock %}

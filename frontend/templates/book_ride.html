@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Đặt Xe - VietBike{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" />
+    <link rel="stylesheet" href="{% static 'css/book_ride.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="book-ride-container">
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="floating-element element-1"></div>
+        <div class="floating-element element-2"></div>
+        <div class="floating-element element-3"></div>
+        <div class="floating-element element-4"></div>
+    </div>
+
+    <div class="container">
+        <!-- Hero Header -->
+        <div class="hero-header">
+            <div class="hero-icon">
+                <i class="bi bi-geo-alt-fill"></i>
+                <div class="icon-pulse"></div>
+            </div>
+            <h1 class="hero-title">Đặt Chuyến Đi</h1>
+            <p class="hero-subtitle">Trải nghiệm di chuyển thông minh và tiện lợi</p>
+            <div class="hero-badges">
+                <div class="badge">
+                    <i class="bi bi-shield-check"></i>
+                    <span>An toàn</span>
+                </div>
+                <div class="badge">
+                    <i class="bi bi-lightning-charge"></i>
+                    <span>Nhanh chóng</span>
+                </div>
+                <div class="badge">
+                    <i class="bi bi-star-fill"></i>
+                    <span>Chất lượng</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="booking-layout">
+            <!-- Booking Form -->
+            <div class="booking-section">
+                <div class="glass-card booking-card">
+                    <div class="card-header">
+                        <div class="header-icon">
+                            <i class="bi bi-plus-circle-fill"></i>
+                        </div>
+                        <h3 class="card-title">Thông tin chuyến đi</h3>
+                        <p class="card-subtitle">Điền thông tin để đặt xe</p>
+                    </div>
+
+                    <form class="booking-form" id="bookingForm" method="post" action="{% url 'frontend:customer:book_ride' %}">
+                        {% csrf_token %}
+                        <!-- Pickup Location -->
+                        <div class="form-group floating-input">
+                            <div class="input-wrapper">
+                                <input type="text" class="form-input" id="pickup_location" name="start_location" placeholder=" " required>
+                                <label for="pickup_location" class="input-label">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    Điểm đón
+                                </label>
+                                <button type="button" class="location-btn" id="setPickup">
+                                    <i class="bi bi-crosshair"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Route Connector -->
+                        <div class="route-connector">
+                            <div class="connector-line">
+                                <div class="line-gradient"></div>
+                                <div class="moving-dot"></div>
+                            </div>
+                            <div class="connector-icon">
+                                <i class="bi bi-arrow-down"></i>
+                            </div>
+                        </div>
+
+                        <!-- Destination Location -->
+                        <div class="form-group floating-input">
+                            <div class="input-wrapper">
+                                <input type="text" class="form-input" id="destination_location" name="end_location" placeholder=" " required>
+                                <label for="destination_location" class="input-label">
+                                    <i class="bi bi-geo-fill"></i>
+                                    Điểm đến
+                                </label>
+                                <button type="button" class="location-btn" id="setDestination">
+                                    <i class="bi bi-crosshair"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Vehicle Selection -->
+                        <div class="vehicle-selection">
+                            <h4 class="selection-title">Chọn loại xe</h4>
+                            <div class="vehicle-grid">
+                                <div class="vehicle-card active" data-type="bike">
+                                    <div class="vehicle-icon">
+                                        <i class="bi bi-bicycle"></i>
+                                    </div>
+                                    <div class="vehicle-info">
+                                        <h5 class="vehicle-name">Xe máy</h5>
+                                        <p class="vehicle-desc">Nhanh chóng, tiết kiệm</p>
+                                        <div class="vehicle-features">
+                                            <span class="feature">2 người</span>
+                                            <span class="feature">15-20k</span>
+                                        </div>
+                                    </div>
+                                    <div class="selection-indicator">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    </div>
+                                </div>
+
+                                <div class="vehicle-card" data-type="car">
+                                    <div class="vehicle-icon">
+                                        <i class="bi bi-car-front-fill"></i>
+                                    </div>
+                                    <div class="vehicle-info">
+                                        <h5 class="vehicle-name">Ô tô</h5>
+                                        <p class="vehicle-desc">Thoải mái, an toàn</p>
+                                        <div class="vehicle-features">
+                                            <span class="feature">4 người</span>
+                                            <span class="feature">25-35k</span>
+                                        </div>
+                                    </div>
+                                    <div class="selection-indicator">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="vehicle_type" id="vehicle_type" value="bike">
+                        </div>
+
+                        <!-- Fare Estimate -->
+                        <div class="fare-section">
+                            <div class="fare-header">
+                                <i class="bi bi-calculator"></i>
+                                <span>Giá ước tính</span>
+                            </div>
+                            <div class="fare-display">
+                                <div class="fare-amount" id="estimated_fare">
+                                    <span class="amount">--</span>
+                                    <span class="currency">VNĐ</span>
+                                </div>
+                                <div class="fare-note">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span>Giá có thể thay đổi theo thực tế</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Book Button -->
+                        <button type="submit" class="book-btn" id="confirmBooking">
+                            <div class="btn-background"></div>
+                            <div class="btn-content">
+                                <i class="bi bi-lightning-charge-fill"></i>
+                                <span>Đặt chuyến ngay</span>
+                            </div>
+                            <div class="btn-ripple"></div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Map Section -->
+            <div class="map-section">
+                <div class="glass-card map-card">
+                    <div class="map-header">
+                        <div class="map-title">
+                            <i class="bi bi-map"></i>
+                            <span>Bản đồ</span>
+                        </div>
+                        <div class="map-controls">
+                            <button class="control-btn" id="locateMe" title="Vị trí của tôi">
+                                <i class="bi bi-geo-alt"></i>
+                            </button>
+                            <button class="control-btn" id="centerMap" title="Căn giữa">
+                                <i class="bi bi-bullseye"></i>
+                            </button>
+                            <button class="control-btn" id="fullscreenMap" title="Toàn màn hình">
+                                <i class="bi bi-arrows-fullscreen"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="map-container">
+                        <div id="map"></div>
+                        
+                        <!-- Map Overlays -->
+                        <div class="map-overlays">
+                            <!-- Route Info -->
+                            <div class="route-info" id="routeInfo" style="display: none;">
+                                <div class="route-stat">
+                                    <i class="bi bi-clock-fill"></i>
+                                    <div class="stat-content">
+                                        <span class="stat-value" id="routeTime">--</span>
+                                        <span class="stat-label">phút</span>
+                                    </div>
+                                </div>
+                                <div class="route-stat">
+                                    <i class="bi bi-signpost-fill"></i>
+                                    <div class="stat-content">
+                                        <span class="stat-value" id="routeDistance">--</span>
+                                        <span class="stat-label">km</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Loading Indicator -->
+                            <div class="map-loading" id="mapLoading" style="display: none;">
+                                <div class="loading-spinner"></div>
+                                <span>Đang tính toán tuyến đường...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="quick-btn" id="useCurrentLocation">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>Vị trí hiện tại</span>
+                    </button>
+                    <button class="quick-btn" id="savedLocations">
+                        <i class="bi bi-bookmark-fill"></i>
+                        <span>Địa điểm đã lưu</span>
+                    </button>
+                    <button class="quick-btn" id="recentTrips">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Chuyến đi gần đây</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h4>An toàn tuyệt đối</h4>
+                <p>Tài xế được xác minh danh tính và đánh giá thường xuyên</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-lightning-charge"></i>
+                </div>
+                <h4>Nhanh chóng</h4>
+                <p>Tìm tài xế gần nhất chỉ trong vài giây</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <h4>Giá cả hợp lý</h4>
+                <p>Giá cước minh bạch, không phụ phí ẩn</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script>
+        mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Thay bằng API key của bạn
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [106.6297, 10.8230], // Tọa độ mặc định (TP.HCM)
+            zoom: 12
+        });
+
+        // Logic JS cơ bản (cần mở rộng trong book_ride.js)
+        document.getElementById('setPickup').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    map.setCenter([longitude, latitude]);
+                    document.getElementById('pickup_location').value = `${latitude}, ${longitude}`;
+                });
+            }
+        });
+
+        document.getElementById('setDestination').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    map.setCenter([longitude, latitude]);
+                    document.getElementById('destination_location').value = `${latitude}, ${longitude}`;
+                });
+            }
+        });
+
+        document.querySelectorAll('.vehicle-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.vehicle-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                document.getElementById('vehicle_type').value = card.dataset.type;
+            });
+        });
+
+        document.getElementById('confirmBooking').addEventListener('click', (e) => {
+            e.preventDefault();
+            const form = document.getElementById('bookingForm');
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Đặt chuyến thành công!');
+                    window.location.href = '/customer/track_ride/' + data.ride_id;
+                } else {
+                    alert(data.error || 'Đặt chuyến thất bại.');
+                }
+            })
+            .catch(error => alert('Lỗi kết nối: ' + error));
+        });
+    </script>
+    <script src="{% static 'js/book_ride.js' %}"></script>
+{% endblock %}
